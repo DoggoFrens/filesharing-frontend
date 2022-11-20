@@ -2,46 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function Down({ id }: { id: string }) {
 
-    const worker = useRef<Worker | null>(null)
-    const stream = useRef<FileSystemWritableFileStream | null>(null)
-
-    const chunks = useRef<ArrayBuffer[]>([])
-
-    const stop = useRef<boolean>(false)
+    const wsRef = useRef<WebSocket | null>(null)
 
     useEffect(() => {
-        worker.current?.terminate()
-        worker.current = new Worker(new URL('./workd.js', import.meta.url))
-        worker.current.onmessage = (e) => {
-            if (e.type === 'progress') {
-                chunks.current.push(e.data.bytes)
-            } else if (e.type === 'end') {
-                stop.current = true
-            }
+        wsRef.current?.close()
+        wsRef.current = new WebSocket(`ws://localhost:5000/${id}`)
+        wsRef.current.binaryType = 'arraybuffer'
+        wsRef.current.onmessage = (e) => {
+            console.log(e.data)
         }
-    }, [])
-    
+    }, [id])
+
     const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        const newHandle = await window.showSaveFilePicker()
-        stream.current = await newHandle.createWritable()
-
-        worker.current?.postMessage({ id });
-
-        (async () => {
-            while (true) {
-                if (chunks.current.length > 0) {
-                    const bytes = chunks.current.shift()!
-                    console.log(bytes)
-                    await stream.current!.write(bytes)
-                }
-
-                if (stop.current) {
-                    break
-                }
-            }
-        })()
     }
-    
+
     return (
         <div id="down">
             <button onClick={onClick} key={1}>XD!!!</button>
