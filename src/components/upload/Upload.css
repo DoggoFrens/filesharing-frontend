@@ -1,0 +1,131 @@
+#upload {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    row-gap: 50px;
+}
+
+#drop-area {
+    width: 80%;
+    height: 80%;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+
+    box-sizing: border-box;
+
+    background-color: #e0e0e0;
+    border-radius: 30px;
+
+    font-size: 40px;
+    font-weight: 500;
+    color: #999;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: 600;
+}
+
+#drop-area:hover {
+    border: solid 2px var(--color-accent);
+    color: var(--color-accent);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#file-upload-area {
+    width: 90%;
+    height: 500px;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: flex-start;
+    column-gap: 40px;
+}
+
+#session-link {
+    width: 800px;
+
+    display: flex;
+    flex-flow: row nowrap;
+    column-gap: 10px;
+    
+    border-radius: 10px;
+    background-color: #e0e0e0;
+}
+
+#session-link-copy {
+    padding: 10px;
+
+    text-align: center;
+
+    background-color: #bbb;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+#session-link-copy:hover {
+    background-color: var(--color-accent);
+    color: white;
+    cursor: pointer;
+}
+
+#session-link-content {
+    padding: 10px;
+}
+
+#session-link-content:hover {
+    text-decoration: underline;
+}
+
+#file-icon {
+    position: relative;
+
+    width: 300px;
+    height: 450px;
+
+    border-radius: 20px;
+
+    background-color: #ccc;
+}
+
+#file-icon > svg {
+    position: absolute;
+}
+
+#file-icon-overlay {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 20px;
+    border-top-right-radius: 220px;
+
+    background-color: #eee;
+}
+
+#file-name {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+#file-info {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+#file-info-size {
+    color: #999;
+    margin-left: 20px;
+}

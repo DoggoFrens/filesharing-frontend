@@ -1,8 +1,8 @@
 import './index.css'
 
 import ReactDOM from 'react-dom/client'
-import Upload from './components/Upload'
-import Download from './components/Download'
+import Upload from './components/upload/Upload'
+import Download from './components/download/Download'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)

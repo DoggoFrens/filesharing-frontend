@@ -1,7 +1,7 @@
 import { FileInfoRequestMessage, Message, MessageType } from "@doggofrens/filesharing-ws-proto"
 
 export interface FileInfo {
-    id: string,
+    id?: string,
     name?: string,
     size?: number,
 }
