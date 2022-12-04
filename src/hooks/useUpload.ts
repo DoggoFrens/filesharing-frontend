@@ -1,4 +1,4 @@
-import { MessageType, FileInfoRequestMessage, Message, FileInfoMessage, FileChunkMessage } from "@doggofrens/filesharing-ws-proto";
+import { MessageType, InfoRequestMessage, Message, InfoMessage, ChunkMessage, ChunkSizeInfoMessage, ChunkRequestMessage  } from "@doggofrens/filesharing-ws-proto";
 import { useRef, useState } from "react";
 import { parseMessage, FileInfo, readAndSplitFile } from "../utils";
 
@@ -13,46 +13,60 @@ export const useUpload = () => {
     const wsRef = useRef<WebSocket | null>(null);
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [sessionId, setSessionId] = useState<string | null>(null);
-    const fileChunksRef = useRef<Uint8Array[] | null>(null);
-    const nextChunkNumberRef = useRef<number>(0);
     const [progress, setProgress] = useState<number>(0);
+    const fileChunksRef = useRef<Uint8Array[] | null>(null);
+    const chunkSizeRef = useRef<number>(0);
+    const fileRef = useRef<File | null>(null);
 
-    const handleMessage = async (message: Message, file: File) => {
+    const handleMessage = async (message: Message) => {
+        console.log(message);
         switch (message.type) {
-            case MessageType.FileInfoRequest:
-                const fileInfoRequest = message as FileInfoRequestMessage;
+            case MessageType.InfoRequest:
+                const fileInfoRequest = message as InfoRequestMessage;
                 setSessionId(fileInfoRequest.id);
-                fileChunksRef.current = await readAndSplitFile(file);
-                wsRef.current!.send(new FileInfoMessage(file.name, file.size).toUint8Array());
+                console.log(new InfoMessage(fileRef.current!.name, fileRef.current!.size));
+                send(new InfoMessage(fileRef.current!.name, fileRef.current!.size));
                 break;
-            case MessageType.Ack:
-                sendNextChunk();
-                setProgress((nextChunkNumberRef.current / fileChunksRef.current!.length) * 100);
+            case MessageType.ChunkRequest:
+                const chunkRequest = message as ChunkRequestMessage;
+                sendChunk(chunkRequest.number);
+                setProgress((chunkRequest.number / fileChunksRef.current!.length) * 100);
+                break;
+            case MessageType.ChunkSizeInfo:
+                const chunkSizeInfo = message as ChunkSizeInfoMessage;
+                chunkSizeRef.current = chunkSizeInfo.chunkSize;
+                fileChunksRef.current = await readAndSplitFile(fileRef.current!, chunkSizeInfo.chunkSize);
                 break;
             default:
                 console.log("Unknown message type", message);
         }
     }
 
-    const sendNextChunk = () => {
-        if (fileChunksRef.current && nextChunkNumberRef.current < fileChunksRef.current.length) {
-            wsRef.current?.send(new FileChunkMessage(nextChunkNumberRef.current, fileChunksRef.current[nextChunkNumberRef.current]).toUint8Array())
-            nextChunkNumberRef.current++
+    const sendChunk = (chunkNumber: number) => {
+        if (fileChunksRef.current && chunkNumber < fileChunksRef.current.length) {
+            send(new ChunkMessage(chunkNumber, fileChunksRef.current[chunkNumber]))
         }
     }
 
+    const send = (message: Message) : void => {
+        console.log(message);
+        wsRef.current!.send(message.toUint8Array());
+    }
+
     const upload = (file: File) => {
-        setFileInfo((prev) => ({...prev, name: file.name, size: file.size }));
+        console.log(file);
+        fileRef.current = file;
+        setFileInfo((prev) => ({...prev, name: file.name, size: file.size, type: file.type}));
         if(wsRef.current) {
             wsRef.current.close();
         }
-        const ws = new WebSocket("ws://:5000");
+        const ws = new WebSocket("ws://localhost:5000");
         ws.binaryType = "arraybuffer";
         wsRef.current = ws;
         ws.onmessage = (e: MessageEvent<ArrayBuffer>) => {
             const message = parseMessage(e.data);
             if (message) {
-                handleMessage(message, file);
+                handleMessage(message);
             }
         }
     }

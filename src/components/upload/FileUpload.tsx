@@ -20,16 +20,18 @@ export default function FileUploadArea({fileInfo, progress} : FileUploadAreaProp
             <div>
                 <span id="file-name">{fileInfo.name}</span>
                 <div id="file-info">
-                    <span>Text File</span>
+                    <span id="file-type">{fileInfo.type?.toUpperCase()}</span>
                     <span id="file-info-size">({fileInfo.size} Bytes)</span>
                 </div>
-                <div id='progress-circle'>
-                    <svg width={300} height={300}>
-                        <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#ccc" fill="none" />
-                        <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#000" fill="none" strokeDasharray={`${progress} 100`} />
-                    </svg>
-                    100%
-                </div>
+                    <div id='progress-circle'>
+                        <svg width={300} height={300}>
+                            <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#ccc" fill="none" />
+                            <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#000" fill="none" strokeDasharray={`${progress} 100`} />
+                        </svg>
+                        <span id="progress-percentage">
+                            {progress}%
+                        </span>
+                    </div>
             </div>
         </div>
     )

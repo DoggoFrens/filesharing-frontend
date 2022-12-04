@@ -7,8 +7,6 @@ import { IUseUpload, useUpload } from '../../hooks/useUpload'
 
 export default function Upload() {
 
-    const tempSessionId = "abc-123-def-456";
-
     const { upload, fileInfo, sessionId, progress }: IUseUpload = useUpload();
 
     const onDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
@@ -17,19 +15,21 @@ export default function Upload() {
         e.preventDefault()
         if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
             const file: File | null = e.dataTransfer.items[0].getAsFile()
-            if (file) {
-                upload(file);
-            }
+            uploadFile(file)
         }
+    }
+
+    const uploadFile = (file: File | null) => {
+        file && upload(file)
     }
 
     return (
         <div id='upload'>
             <h1>File-sharing project</h1>
-            {tempSessionId && <SessionLink {...{ sessionId: tempSessionId }}/>}
+            {sessionId && <SessionLink {...{ sessionId: sessionId }}/>}
             {fileInfo ? 
                 <FileUpload {...{fileInfo, progress}}/> 
-                : <DropArea {...{onDragOver, onDrop}} />
+                : <DropArea {...{onDragOver, onDrop, uploadFile}} />
             }
         </div>
     )

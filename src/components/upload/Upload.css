@@ -129,3 +129,21 @@ h1 {
     color: #999;
     margin-left: 20px;
 }
+
+#progress-percentage {
+    top: 0;
+    position: absolute;
+    font-size: 24px;
+    font-weight: 500;
+    width: 300px;
+    height: 300px;
+    text-align: center;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#progress-circle {
+    position: relative;
+}

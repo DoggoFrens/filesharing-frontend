@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { ChunkRequestMessage } from '@doggofrens/filesharing-ws-proto'
+import { useEffect, useRef } from 'react'
 
 export default function Down({ id }: { id: string }) {
 
     const wsRef = useRef<WebSocket | null>(null)
+    const chunkNoRef = useRef<number>(0);
 
     useEffect(() => {
         wsRef.current?.close()
@@ -14,6 +16,8 @@ export default function Down({ id }: { id: string }) {
     }, [id])
 
     const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        wsRef.current?.send(new ChunkRequestMessage(chunkNoRef.current).toUint8Array());
+        chunkNoRef.current++;
     }
 
     return (
