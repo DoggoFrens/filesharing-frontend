@@ -30,7 +30,6 @@ export const useUpload = () => {
             case MessageType.ChunkRequest:
                 const chunkRequest = message as ChunkRequestMessage;
                 sendChunk(chunkRequest.number);
-                setProgress((chunkRequest.number / fileChunksRef.current!.length) * 100);
                 break;
             case MessageType.ChunkSizeInfo:
                 const chunkSizeInfo = message as ChunkSizeInfoMessage;
@@ -45,11 +44,16 @@ export const useUpload = () => {
     const sendChunk = (chunkNumber: number) => {
         if (fileChunksRef.current && chunkNumber < fileChunksRef.current.length) {
             send(new ChunkMessage(chunkNumber, fileChunksRef.current[chunkNumber]))
+            setProgress((chunkNumber + 1 / fileChunksRef.current!.length) * 100);
+        } else {
+            console.error("Chunk number out of range", chunkNumber);
         }
     }
 
     const send = (message: Message) : void => {
-        console.log(message);
+        let res = message.toUint8Array();
+        let parsedRes = parseMessage(res);
+        console.log(parsedRes);
         wsRef.current!.send(message.toUint8Array());
     }
 

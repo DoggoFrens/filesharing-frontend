@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { FileInfo } from "../../utils";
 
 interface FileUploadAreaProps {
@@ -5,7 +6,32 @@ interface FileUploadAreaProps {
     progress: number
 }
 
+function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
+    var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+  
+    return {
+      x: centerX + (radius * Math.cos(angleInRadians)),
+      y: centerY + (radius * Math.sin(angleInRadians))
+    };
+}
+  
+function describeArc(x: number, y: number, radius: number, startAngle: number, endAngle: number){
+
+    var start = polarToCartesian(x, y, radius, endAngle);
+    var end = polarToCartesian(x, y, radius, startAngle);
+
+    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+    var d = [
+        "M", start.x, start.y, 
+        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+    ].join(" ");
+
+    return d;
+}
+
 export default function FileUploadArea({fileInfo, progress} : FileUploadAreaProps) {
+
     return (
         <div id='file-upload-area'>
             <div id='file-icon'>
@@ -26,10 +52,10 @@ export default function FileUploadArea({fileInfo, progress} : FileUploadAreaProp
                     <div id='progress-circle'>
                         <svg width={300} height={300}>
                             <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#ccc" fill="none" />
-                            <circle cx={150} cy={150} r={100} strokeWidth={20} stroke="#000" fill="none" strokeDasharray={`${progress} 100`} />
+                            <path d={describeArc(150, 150, 100, 0, progress * 3.5999)} strokeWidth={20} stroke="#999" fill="none" />
                         </svg>
                         <span id="progress-percentage">
-                            {progress}%
+                            {Math.trunc(progress)}%
                         </span>
                     </div>
             </div>

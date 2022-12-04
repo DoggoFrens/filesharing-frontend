@@ -1,4 +1,4 @@
-import { InfoRequestMessage, ChunkRequestMessage, Message, MessageType, ChunkSizeInfoMessage } from "@doggofrens/filesharing-ws-proto"
+import { InfoRequestMessage, ChunkRequestMessage, Message, MessageType, ChunkSizeInfoMessage, InfoMessage } from "@doggofrens/filesharing-ws-proto"
 
 export interface FileInfo {
     id?: string,
@@ -16,6 +16,8 @@ export const parseMessage = (data: ArrayBuffer): Message | null => {
             return ChunkRequestMessage.fromUint8Array(bytes)
         case MessageType.ChunkSizeInfo:
             return ChunkSizeInfoMessage.fromUint8Array(bytes)
+        case MessageType.Info:
+            return InfoMessage.fromUint8Array(bytes)
         default:
             return null
     }

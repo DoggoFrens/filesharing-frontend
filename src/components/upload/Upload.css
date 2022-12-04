@@ -83,10 +83,6 @@ h1 {
     padding: 10px;
 }
 
-#session-link-content:hover {
-    text-decoration: underline;
-}
-
 #file-icon {
     position: relative;
 
