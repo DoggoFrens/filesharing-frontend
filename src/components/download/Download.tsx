@@ -1,28 +1,30 @@
-import { ChunkRequestMessage } from '@doggofrens/filesharing-ws-proto'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react';
+import { useDownload } from '../../hooks/useDownload';
 
 export default function Down({ id }: { id: string }) {
 
-    const wsRef = useRef<WebSocket | null>(null)
-    const chunkNoRef = useRef<number>(0);
-
-    useEffect(() => {
-        wsRef.current?.close()
-        wsRef.current = new WebSocket(`ws://localhost:5000/${id}`)
-        wsRef.current.binaryType = 'arraybuffer'
-        wsRef.current.onmessage = (e) => {
-            console.log(e.data)
-        }
-    }, [id])
+    const { info, progress, complete, download, data } = useDownload(id);
 
     const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        wsRef.current?.send(new ChunkRequestMessage(chunkNoRef.current).toUint8Array());
-        chunkNoRef.current++;
+        download();
+    }
+
+    useEffect(() => {
+        console.log('USEEFFECT', data);
+        // save file
+    }, [complete]);
+
+    if (complete) {
+        console.log('IF STATEMENT', data);
     }
 
     return (
         <div id="down">
-            <button onClick={onClick} key={1}>XD!!!</button>
+            <button onClick={onClick}>DOWNLOAD</button>
+            <div>{!!info && JSON.stringify(info)}</div>
+            <div>{!!progress && progress}</div>
+            <div>{!!complete && complete}</div>
+            <div>{!!data && "WE HAVE DATA !!!!!!!!!!!!!!!!!!!!!!!!!"}</div>
         </div>
     )
 }
